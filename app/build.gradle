@@ -28,7 +28,7 @@ dependencies {
 
 application {
     // Define the main class for the application.
-    mainClass = 'urza_pipeline.App'
+    mainClass = 'urza_pipeline.Main'
 }
 
 tasks.named('test') {

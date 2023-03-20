@@ -28,11 +28,8 @@ public class Server extends WebSocketServer {
 	@Override
 	public void onMessage(WebSocket conn, String message) {
 		System.out.println("received message from "	+ conn.getRemoteSocketAddress() + ": " + message);
-	}
-
-	@Override
-	public void onMessage( WebSocket conn, ByteBuffer message ) {
-		System.out.println("received ByteBuffer from "	+ conn.getRemoteSocketAddress());
+		Thread worker = new Thread(new Task(message));
+		worker.start();
 	}
 
 	@Override

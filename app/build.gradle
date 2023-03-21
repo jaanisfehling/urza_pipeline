@@ -22,8 +22,9 @@ dependencies {
 
     // This dependency is used by the application.
     implementation 'com.google.guava:guava:31.1-jre'
-    
+
     implementation 'org.java-websocket:Java-WebSocket:1.5.3'
+    implementation 'org.jsoup:jsoup:1.15.4'
 }
 
 application {
@@ -37,7 +38,7 @@ tasks.named('test') {
 }
 
 java {
-  toolchain {
-    languageVersion.set(JavaLanguageVersion.of(19))
-  }
+    toolchain {
+        languageVersion.set(JavaLanguageVersion.of(19))
+    }
 }

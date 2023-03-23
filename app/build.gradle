@@ -9,6 +9,7 @@
 plugins {
     // Apply the application plugin to add support for building a CLI application in Java.
     id 'application'
+    id "com.github.node-gradle.node" version "3.5.1"
 }
 
 repositories {
@@ -24,7 +25,14 @@ dependencies {
     implementation 'com.google.guava:guava:31.1-jre'
 
     implementation 'org.java-websocket:Java-WebSocket:1.5.3'
+
+    // jsoup HTML parser library @ https://jsoup.org/
     implementation 'org.jsoup:jsoup:1.15.4'
+
+    // https://mvnrepository.com/artifact/org.postgresql/postgresql
+    implementation 'org.postgresql:postgresql:42.6.0'
+
+    implementation 'com.google.code.gson:gson:2.10.1'
 }
 
 application {

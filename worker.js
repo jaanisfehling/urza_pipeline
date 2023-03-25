@@ -1,10 +1,15 @@
+import { createRequire } from "module";
+const require = createRequire(import.meta.url);
+
 import {Readability} from "@mozilla/readability";
 import DOMPurify from "dompurify";
 import jsdom from "jsdom";
-
 const {JSDOM} = jsdom;
 
-export function task(article) {
+const {isMainThread, parentPort, workerData} = require("worker_threads");
+
+
+export function worker(article) {
 
     // Create DOM
     const doc = new JSDOM(article.htmlContent, {url: article.url});
@@ -27,4 +32,8 @@ export function task(article) {
     article.relevance = 0.0;
 
     return article;
+}
+
+if (!isMainThread) {
+    parentPort.postMessage(worker(workerData.article));
 }

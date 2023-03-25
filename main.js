@@ -1,8 +1,9 @@
+import { createRequire } from "module";
+const require = createRequire(import.meta.url);
+
 import { WebSocketServer } from 'ws';
-import pg from "pg";
-import * as fs from "fs";
-import {client, saveArticle} from "./db.js";
-import {task} from "./task.js";
+import {saveArticle} from "./db.js";
+const {Worker} = require("worker_threads");
 
 
 const wss = new WebSocketServer({ port: 8888 })
@@ -15,8 +16,17 @@ wss.on("connection", ws => {
     ws.on("message", async data => {
         console.log("Received article");
         let article = JSON.parse(data);
-        article = task(article);
-        await saveArticle(client, article);
+        const worker = new Worker("./worker.js", {
+            workerData: {
+                article: article
+            }
+        });
+        worker.once("message", async result => {
+            await saveArticle(result);
+        });
+        worker.on("error", (error) => {
+            console.log("Error in Worker for " + article.url + error);
+        });
     });
 
     ws.on("close", () => {

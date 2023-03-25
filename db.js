@@ -11,7 +11,7 @@ export const client = new pg.Client({
 });
 await client.connect();
 
-export async function saveArticle(client, article) {
+export async function saveArticle(article) {
     const text = "INSERT INTO \"Article\" VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14)"
     const values = [article.url, article.siteName, article.dateTime, article.title, article.htmlContent, article.textContent, article.authorMetadata, article.readabilityExcerpt, article.readabilityDir, article.readabilityLang, article.readabilitySiteName, article.summary, article.sentiment, article.relevance]
 

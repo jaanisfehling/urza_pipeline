@@ -23,3 +23,16 @@ export async function saveArticle(article) {
         console.log(e, "Cannot save to database");
     }
 }
+
+export async function updateMostRecentArticle(article) {
+    const text = "UPDATE \"target\" SET most_recent_article_url=$1 WHERE list_view_url=$2"
+    const values = [article.url, article.listViewUrl]
+
+    try {
+        const res = await client.query(text, values);
+        console.log("Saved article to database")
+        return res;
+    } catch (e) {
+        console.log(e, "Cannot save to database");
+    }
+}

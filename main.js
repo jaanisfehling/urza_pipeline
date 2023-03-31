@@ -6,18 +6,17 @@ import {saveArticle} from "./db.js";
 const {Worker} = require("worker_threads");
 
 
-const receiver = new WebSocketServer({ port: 8888 })
+const wss = new WebSocketServer({ port: 8888 })
 console.log("Opened websocket at Port 8888");
 // const sender = new WebSocket("ws://localhost:8000/ws/news");
 
 
-receiver.on("connection", ws => {
+wss.on("connection", ws => {
     console.log("New connection");
 
     ws.on("message", async data => {
         console.log("Received article");
-        console.log(data);
-        let article = JSON.parse(data);
+        let article = JSON.parse(data.toString());
         const worker = new Worker("./worker.js", {
             workerData: {
                 article: article
@@ -25,7 +24,6 @@ receiver.on("connection", ws => {
         });
         worker.once("message", async result => {
             await saveArticle(result);
-            console.log("Sending Result...");
             // sender.send(JSON.stringify(result));
         });
         worker.on("error", (error) => {

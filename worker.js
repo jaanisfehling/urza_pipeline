@@ -22,11 +22,11 @@ export function worker(article) {
     article.title = reader.title;
     article.htmlContent = purify.sanitize(reader.content);
     article.textContent = reader.textContent;
-    article.authorMetadata = reader.byline ?? "";
+    article.authorMetadata = reader.byline;
     article.readabilityExcerpt = reader.excerpt;
-    article.readabilityDir = reader.dir ?? "";
-    article.readabilityLang = reader.lang ?? "";
-    article.readabilitySiteName = reader.siteName ?? "";
+    article.readabilityDir = reader.dir;
+    article.readabilityLang = reader.lang;
+    article.readabilitySiteName = reader.siteName;
     article.summary = "summary";
     article.sentiment = 0.0;
     article.relevance = 0.0;

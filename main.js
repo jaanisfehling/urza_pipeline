@@ -2,7 +2,7 @@ import { createRequire } from "module";
 const require = createRequire(import.meta.url);
 
 import { WebSocketServer } from 'ws';
-import {saveArticle, updateMostRecentArticle} from "./db.js";
+import {saveArticle} from "./db.js";
 const {Worker} = require("worker_threads");
 
 
@@ -26,11 +26,11 @@ wss.on("connection", ws => {
                 });
                 worker.once("message", async result => {
                     await saveArticle(result);
-                    await updateMostRecentArticle(result);
+                    // await updateMostRecentArticle(result);
                     // sender.send(JSON.stringify(result));
                 });
                 worker.on("error", (error) => {
-                    console.log("Error in Worker for " + article.url + error);
+                    console.log("Error in Worker for " + article.url + ":\n" + error);
                 });
             } catch (e) {
                 console.log(e);

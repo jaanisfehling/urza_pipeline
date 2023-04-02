@@ -15,10 +15,10 @@ wss.on("connection", ws => {
     console.log("New connection");
 
     ws.on("message", async data => {
-        console.log("Received article");
         if (data) {
             try {
                 let article = JSON.parse(data.toString());
+                console.log(article.url);
                 const worker = new Worker("./worker.js", {
                     workerData: {
                         article: article

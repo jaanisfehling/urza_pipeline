@@ -26,7 +26,6 @@ wss.on("connection", ws => {
                 });
                 worker.once("message", async result => {
                     await saveArticle(result);
-                    // await updateMostRecentArticle(result);
                     // sender.send(JSON.stringify(result));
                 });
                 worker.on("error", (error) => {

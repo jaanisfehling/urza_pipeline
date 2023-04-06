@@ -15,7 +15,7 @@ wss.on("connection", ws => {
     console.log("New connection");
 
     ws.on("message", async data => {
-        if (data) {
+        if (data && data != "") {
             try {
                 let article = JSON.parse(data.toString());
                 console.log(article.url);

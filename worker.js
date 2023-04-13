@@ -1,10 +1,6 @@
-import { createRequire } from "module";
-const require = createRequire(import.meta.url);
-
 import {Readability} from "@mozilla/readability";
 import DOMPurify from "dompurify";
-import jsdom from "jsdom";
-const {JSDOM} = jsdom;
+import {JSDOM} from "jsdom";
 
 const {isMainThread, parentPort, workerData} = require("worker_threads");
 

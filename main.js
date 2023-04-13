@@ -1,13 +1,10 @@
-import { createRequire } from "module";
-const require = createRequire(import.meta.url);
-
 import { WebSocketServer } from 'ws';
 import {saveArticle} from "./db.js";
-const {Worker} = require("worker_threads");
+const {Worker} = "worker_threads";
 
 
-const wss = new WebSocketServer({ port: 8888 })
-console.log("Opened websocket at Port 8888");
+const wss = new WebSocketServer({ port: 9000 })
+console.log("Opened websocket at Port 9000");
 // const sender = new WebSocket("ws://localhost:8000/ws/news");
 
 

@@ -1,15 +1,16 @@
+import { createRequire } from "module";
+const require = createRequire(import.meta.url);
+
 import {Readability} from "@mozilla/readability";
 import DOMPurify from "dompurify";
 import {JSDOM} from "jsdom";
-
 const {isMainThread, parentPort, workerData} = require("worker_threads");
 
 // Example article object:
 // {
 //     "url": "http://example.com",
 //     "siteName": "Example - News",
-//     "htmlContent": "<html>Hello World</html>",
-//     "listViewUrl": "https://www.example.com/media/"
+//     "htmlContent": "<html>Hello World</html>"
 // }
 
 export function worker(article) {

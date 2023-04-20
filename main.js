@@ -1,7 +1,8 @@
+import { createRequire } from "module";
+const require = createRequire(import.meta.url);
 import { WebSocketServer } from 'ws';
 import {saveArticle} from "./db.js";
-const {Worker} = "worker_threads";
-
+const {Worker} = require("worker_threads");
 
 const wss = new WebSocketServer({ port: 9000 })
 console.log("Opened websocket at Port 9000");
@@ -15,7 +16,7 @@ wss.on("connection", ws => {
         if (data && data != "") {
             try {
                 let article = JSON.parse(data.toString());
-                console.log(article.url);
+                console.log("Received Article: " + article.url);
                 const worker = new Worker("./worker.js", {
                     workerData: {
                         article: article
@@ -25,11 +26,11 @@ wss.on("connection", ws => {
                     await saveArticle(result);
                     // sender.send(JSON.stringify(result));
                 });
-                worker.on("error", (error) => {
-                    console.log("Error in Worker for " + article.url + ":\n" + error);
+                worker.on("error", (e) => {
+                    console.error("Error in Worker for " + article.url + ":\n" + e.message);
                 });
             } catch (e) {
-                console.log(e);
+                console.error("Error receiving Data:\n", e.message);
             }
         }
     });

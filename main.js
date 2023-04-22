@@ -46,7 +46,8 @@ server.on("connection", listener => {
                     }
                 });
                 worker.once("message", async result => {
-                    if (await saveArticle(result)) {
+                    if (await saveArticle(result) && result.isNew) {
+                        delete result.isNew;
                         client.send(JSON.stringify(result));
                     }
                 });

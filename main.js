@@ -2,11 +2,14 @@ import { createRequire } from "module";
 const require = createRequire(import.meta.url);
 import { WebSocketServer, WebSocket } from 'ws';
 import {saveArticle} from "./db.js";
+import tf from "@tensorflow/tfjs-node";
 const {Worker} = require("worker_threads");
+
+// export const finbert = await tf.loadLayersModel("tfjs_finbert/model.json");
 
 
 // const token = process.env.TOKEN;
-const token = "2cda14bbd4aa175d16d4d7314c32f2edc89f9956";
+const token = "e2d57d8781555c1f066258cd6ed24e91d9f0b98b";
 const options = {
     headers: {
         "authorization": "Token " + token,
@@ -14,7 +17,7 @@ const options = {
     }
 };
 
-var client;
+let client;
 function connect() {
     client = new WebSocket("ws://127.0.0.1:8000/ws/news/", [], options);
     client.on("open", function() {

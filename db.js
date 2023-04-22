@@ -18,8 +18,9 @@ export async function saveArticle(article) {
     try {
         const res = await client.query(text, values);
         console.log("Saved article to database: " + article.url)
-        return res;
+        return true;
     } catch (e) {
         console.error("Cannot save to database:\n", e.message);
+        return false;
     }
 }

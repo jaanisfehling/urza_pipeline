@@ -4,8 +4,6 @@ import { WebSocketServer, WebSocket } from 'ws';
 import {saveArticle} from "./db.js";
 const {Worker} = require("worker_threads");
 
-const wss = new WebSocketServer({ port: 9000 })
-console.log("Opened websocket at Port 9000");
 
 // const token = process.env.TOKEN;
 const token = "2cda14bbd4aa175d16d4d7314c32f2edc89f9956";
@@ -15,11 +13,27 @@ const options = {
         "origin": "ws://127.0.0.1:8000"
     }
 };
-const ws = new WebSocket("ws://localhost:8000/ws/news/", [], options);
 
+var client;
+function connect() {
+    client = new WebSocket("ws://127.0.0.1:8000/ws/news/", [], options);
+    client.on("open", function() {
+        console.log("Connected to main server");
+    });
+    client.on("error", function() {
+        console.error("Error on main server websocket");
+    });
+    client.on("close", function() {
+        console.log("Connection closed to main server. Reconnecting...");
+        setTimeout(connect, 5000);
+    });
+}
+connect();
 
-wss.on("connection", listener => {
-    console.log("New connection");
+const server = new WebSocketServer({ port: 9000 })
+console.log("Opened websocket at port 9000");
+server.on("connection", listener => {
+    console.log("New crawler connection");
 
     listener.on("message", async data => {
         if (data && data != "") {
@@ -32,11 +46,12 @@ wss.on("connection", listener => {
                     }
                 });
                 worker.once("message", async result => {
-                    await saveArticle(result);
-                    sender.send(JSON.stringify(result));
+                    if (await saveArticle(result)) {
+                        client.send(JSON.stringify(result));
+                    }
                 });
                 worker.on("error", (e) => {
-                    console.error("Error in Worker for " + article.url + ":\n" + e.message);
+                    console.error("Error in worker for " + article.url + ":\n" + e.message);
                 });
             } catch (e) {
                 console.error("Error receiving Data:\n", e.message);

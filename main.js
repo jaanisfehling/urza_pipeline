@@ -2,10 +2,7 @@ import { createRequire } from "module";
 const require = createRequire(import.meta.url);
 import { WebSocketServer, WebSocket } from 'ws';
 import {saveArticle} from "./db.js";
-import tf from "@tensorflow/tfjs-node";
 const {Worker} = require("worker_threads");
-
-// export const finbert = await tf.loadLayersModel("tfjs_finbert/model.json");
 
 
 // const token = process.env.TOKEN;
@@ -48,10 +45,12 @@ server.on("connection", listener => {
                         article: article
                     }
                 });
-                worker.once("message", async result => {
-                    if (await saveArticle(result) && result.isNew) {
-                        delete result.isNew;
-                        client.send(JSON.stringify(result));
+                worker.once("message", async article => {
+                    if (article.isValid) {
+                        if (await saveArticle(article) && article.isNew) {
+                            delete article.isValid;
+                            client.send(JSON.stringify(article));
+                        }
                     }
                 });
                 worker.on("error", (e) => {

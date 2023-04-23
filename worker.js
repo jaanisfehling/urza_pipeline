@@ -4,18 +4,19 @@ const require = createRequire(import.meta.url);
 import {isProbablyReaderable, Readability} from "@mozilla/readability";
 import DOMPurify from "dompurify";
 import {JSDOM} from "jsdom";
-// import {finbert} from "./main.js";
+import { Buffer } from "node:buffer";
+import minifyHtml from "@minify-html/node";
 const {isMainThread, parentPort, workerData} = require("worker_threads");
-const tf = require('@tensorflow/tfjs-node');
 
 
 export function worker(article) {
     const doc = new JSDOM(article.htmlContent, {url: article.url});
 
-    if (!isProbablyReaderable(doc.window.document)) {
-        article.isNew = false;
+    if (isProbablyReaderable(doc.window.document)) {
+        article.isValid = false;
         return article;
     }
+    article.isValid = true;
 
     let reader = new Readability(doc.window.document).parse();
 
@@ -26,19 +27,12 @@ export function worker(article) {
 
     delete article.html;
     const purify = DOMPurify(doc.window);
-    article.html_content = purify.sanitize(reader.content);
+    article.html_content = minifyHtml.minify(Buffer.from(purify.sanitize(reader.content)), { keep_spaces_between_attributes: true, keep_comments: false }).toString();
 
     article.author_metadata = (reader.byline != null) ? reader.byline.substring(0, 255) : null;
     article.lang = (reader.lang != null) ? reader.lang.substring(0, 255) : null;
     article.content_direction = (reader.dir != null) ? reader.dir.substring(0, 255) : null;
     article.excerpt = (reader.excerpt != null) ? reader.excerpt : null;
-    article.summary = null;
-
-    // const prediction = finbert.analyzeSentence(tf.reader.textContent);
-    article.positive_sentiment = null;
-    article.neutral_sentiment = null;
-    article.negative_sentiment = null;
-
     return article;
 }
 

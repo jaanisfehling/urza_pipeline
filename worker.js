@@ -12,7 +12,7 @@ const {isMainThread, parentPort, workerData} = require("worker_threads");
 export function worker(article) {
     const doc = new JSDOM(article.htmlContent, {url: article.url});
 
-    if (isProbablyReaderable(doc.window.document)) {
+    if (!isProbablyReaderable(doc.window.document)) {
         article.isValid = false;
         return article;
     }

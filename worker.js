@@ -4,35 +4,34 @@ const require = createRequire(import.meta.url);
 import {isProbablyReaderable, Readability} from "@mozilla/readability";
 import DOMPurify from "dompurify";
 import {JSDOM} from "jsdom";
+import {parseHTML} from "linkedom";
 import { Buffer } from "node:buffer";
 import minifyHtml from "@minify-html/node";
 const {isMainThread, parentPort, workerData} = require("worker_threads");
 
 
 export function worker(article) {
-    const doc = new JSDOM(article.htmlContent, {url: article.url});
+    const {document} = parseHTML(article.html)
 
-    if (!isProbablyReaderable(doc.window.document)) {
-        article.isValid = false;
-        return article;
+    if (!isProbablyReaderable(document)) {
+        return null;
     }
-    article.isValid = true;
 
-    let reader = new Readability(doc.window.document).parse();
+    let reader = new Readability(document).parse();
 
     article.scraped_date_time = new Date().toISOString();
     article.site_name = (reader.siteName != null) ? reader.siteName.substring(0, 255) : null;
     article.title = (reader.title != null && reader.title !== "") ? reader.title.substring(0, 255) : null;
-    article.text_content = reader.textContent;
-
-    delete article.html;
-    const purify = DOMPurify(doc.window);
-    article.html_content = minifyHtml.minify(Buffer.from(purify.sanitize(reader.content)), { keep_spaces_between_attributes: true, keep_comments: false }).toString();
-
-    article.author_metadata = (reader.byline != null) ? reader.byline.substring(0, 255) : null;
-    article.lang = (reader.lang != null) ? reader.lang.substring(0, 255) : null;
-    article.content_direction = (reader.dir != null) ? reader.dir.substring(0, 255) : null;
     article.excerpt = (reader.excerpt != null) ? reader.excerpt : null;
+
+    const window = new JSDOM().window;
+    const purify = DOMPurify(window);
+    const purified = purify.sanitize(reader.content);
+    article.html = minifyHtml.minify(Buffer.from(purified), {
+        keep_spaces_between_attributes: true,
+        keep_comments: false
+    }).toString();
+
     return article;
 }
 

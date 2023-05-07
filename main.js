@@ -36,7 +36,7 @@ server.on("connection", listener => {
     console.log("New crawler connection");
 
     listener.on("message", async data => {
-        if (data && data != "") {
+        if (data && data !== "") {
             try {
                 let article = JSON.parse(data.toString());
                 console.log("Received Article: " + article.url);
@@ -46,11 +46,8 @@ server.on("connection", listener => {
                     }
                 });
                 worker.once("message", async article => {
-                    if (article.isValid) {
-                        if (await saveArticle(article) && article.isNew) {
-                            delete article.isValid;
-                            client.send(JSON.stringify(article));
-                        }
+                    if (article != null) {
+                        client.send(JSON.stringify(article));
                     }
                 });
                 worker.on("error", (e) => {

@@ -1,12 +1,11 @@
 import { createRequire } from "module";
 const require = createRequire(import.meta.url);
 import { WebSocketServer, WebSocket } from 'ws';
-import {saveArticle} from "./db.js";
 const {Worker} = require("worker_threads");
 
 
 // const token = process.env.TOKEN;
-const token = "e2d57d8781555c1f066258cd6ed24e91d9f0b98b";
+const token = "48d6a05983127f914636cc322b106db94dea70c9";
 const options = {
     headers: {
         "authorization": "Token " + token,

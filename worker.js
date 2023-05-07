@@ -27,7 +27,7 @@ export function worker(article) {
     const window = new JSDOM().window;
     const purify = DOMPurify(window);
     const purified = purify.sanitize(reader.content);
-    article.html = minifyHtml.minify(Buffer.from(purified), {
+    article.readable_html = minifyHtml.minify(Buffer.from(purified), {
         keep_spaces_between_attributes: true,
         keep_comments: false
     }).toString();

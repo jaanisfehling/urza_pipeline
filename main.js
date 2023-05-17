@@ -46,7 +46,10 @@ server.on("connection", listener => {
                 });
                 worker.once("message", async article => {
                     if (article != null) {
+                        console.log("Valid Article")
                         client.send(JSON.stringify(article));
+                    } else {
+                        console.log("Invalid Article")
                     }
                 });
                 worker.on("error", (e) => {

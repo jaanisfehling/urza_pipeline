@@ -21,8 +21,8 @@ export function worker(article) {
 
     article.scraped_date_time = new Date().toISOString();
     article.site_name = (reader.siteName != null) ? reader.siteName.substring(0, 255) : null;
-    article.title = (reader.title != null && reader.title !== "") ? reader.title.substring(0, 255) : null;
-    article.excerpt = (reader.excerpt != null) ? reader.excerpt : null;
+    article.title = reader.title.substring(0, 255);
+    article.excerpt = reader.excerpt;
 
     const window = new JSDOM().window;
     const purify = DOMPurify(window);
